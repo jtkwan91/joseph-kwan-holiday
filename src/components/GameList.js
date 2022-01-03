@@ -7,10 +7,6 @@ function fetchCategory(c) {
   return axios.get(`http://localhost:3001/apps/?cat=${c}`).then(r => r.data)
 }
 
-function fetchApp(id) {
-  return axios.get(`http://store.steampowered.com/api/appdetails?appids=${id}`).then(r => r.data)
-}
-
 class GameList extends React.Component {
 
   state = { loading: true, error: null, games: [] }
@@ -32,7 +28,7 @@ class GameList extends React.Component {
       return <div className="game__list">
         <h3 className="game__list-title">{this.props.title}</h3>
         {this.state.games.map(game => {
-          return <Game id={game.id} name={game.name} key={game.id}/>
+          return <Game key={game.id} {...game} />
         })}
       </div>
   }
