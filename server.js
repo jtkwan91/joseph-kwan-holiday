@@ -35,11 +35,24 @@ app.get('/apps', async (req, res, next = console.error) => {
   })
   
   // scrape the id and name from the search result
-  const result = await page.$$eval('#search_resultsRows > a[data-ds-appid]', anchors => Array.from(anchors, a => ({
-    id: a.dataset.dsAppid,
-    name: a.querySelector(".title").textContent,
-    href: a.href
-  })))
+  const result = await page.$$eval('#search_resultsRows > a[data-ds-appid]', anchors => {
+    function parseRating(text) {
+      const [_, match = "0"] = text.match(/(\d+)%/) ?? []
+      return Number.parseInt(match)
+    }
+    function parsePrice(text) {
+      const [_, match = "0.00"] = text.match(/CDN\$\s*(\d+\.\d+)\s*$/) ?? []
+      return Number.parseFloat(match)
+    }
+    return Array.from(anchors, a => ({
+      id: a.dataset.dsAppid,
+      name: a.querySelector(".title")?.textContent,
+      href: a.href,
+      image_uri: a.querySelector("img")?.src,
+      rating: parseRating(a.querySelector(".search_review_summary").dataset.tooltipHtml),
+      price: parsePrice(a.querySelector(".search_price").textContent)
+    }))
+  })
 
   // send result to client
   res.json(result.slice(0,10))
