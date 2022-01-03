@@ -42,7 +42,7 @@ app.get('/apps', async (req, res, next = console.error) => {
   })))
 
   // send result to client
-  res.json(result)
+  res.json(result.slice(0,10))
 
   // don't forget to close the puppeteer browser
   await browser.close()
