@@ -25,9 +25,9 @@ class GameList extends React.Component {
 
   render () {
     if (this.state.loading)
-      return <div>Loading...</div>
+      return <div className="game__list">Loading...</div>
     else if (this.state.error)
-      return <div>Error: {this.state.error.message}</div>
+      return <div className="game__list">Error: {this.state.error.message}</div>
     else
       return <div className="game__list">
         <h3 className="game__list-title">{this.props.title}</h3>
