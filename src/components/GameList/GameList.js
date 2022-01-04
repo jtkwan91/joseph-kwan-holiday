@@ -1,6 +1,6 @@
 import React from "react"
 import axios from "axios"
-import Game from "./Game.js"
+import Game from "../Game/Game.js"
 import { Link } from "react-router-dom"
 import "./GameList.scss"
 
