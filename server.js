@@ -32,7 +32,7 @@ app.get('/apps', async (req, res, next = console.error) => {
   if (category == null) return res.json([])
 
   // create steam url
-  const url = `https://store.steampowered.com/search/?sort_by=Reviews_DESC&category1=998&category2=${category}`
+  const url = `https://store.steampowered.com/search/?category1=998&category2=${category}`
   console.log("fetching", url)
   
   // launch puppeteer and scrape terrible steam api
