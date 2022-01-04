@@ -1,8 +1,8 @@
 body{
   box-sizing: border-box;
-  padding: 1rem;
   background-color: #F6FFFE;
   font-family: 'Courier New', Courier, monospace;
+  margin: 0;
 }
 
 .app {

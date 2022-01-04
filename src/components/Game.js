@@ -1,17 +1,7 @@
-import axios from "axios"
 import React from "react"
 import "./Game.css"
 
-function fetchApp(id) {
-  return axios.get(`http://store.steampowered.com/api/appdetails?appids=${id}`).then(r => r.data)
-}
-
 class Game extends React.Component {
-  
-  componentDidUpdate() {
-
-  }
-
   render () {
     const { id, name, rating, price, image_uri } = this.props
     return <div className="game">
@@ -25,7 +15,6 @@ class Game extends React.Component {
             </p>
           </div>
         </div>
-
     </div>
   }
 }

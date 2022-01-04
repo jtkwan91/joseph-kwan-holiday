@@ -1,6 +1,7 @@
 import React from "react"
 import axios from "axios"
 import Game from "./Game.js"
+import { Link } from "react-router-dom"
 import "./GameList.css"
 
 function fetchCategory(c) {
@@ -28,7 +29,9 @@ class GameList extends React.Component {
       return <div className="game__list">
         <h3 className="game__list-title">{this.props.title}</h3>
         {this.state.games.map(game => {
-          return <Game key={game.id} {...game} />
+          return <Link to={`/game/${game.id}`}>
+            <Game key={game.id} {...game} />
+          </Link>
         })}
       </div>
   }
