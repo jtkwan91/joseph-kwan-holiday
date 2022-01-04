@@ -1,7 +1,7 @@
 import './App.scss'
 import {BrowserRouter, Switch , Route} from "react-router-dom"
-import GameList from "./components/GameList.js"
-import GameDetails from "./components/GameDetails.js"
+import GameList from "./components/GameList/GameList"
+import GameDetails from "./components/GameDetails/GameDetails"
 
 function Home() {
   return <>
