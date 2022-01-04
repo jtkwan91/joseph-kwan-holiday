@@ -70,5 +70,5 @@ app.get('/apps', async (req, res, next = console.error) => {
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Steam Search Server listening at http://localhost:${port}`)
 })
