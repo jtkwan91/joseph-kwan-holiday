@@ -1,4 +1,4 @@
-const { default: axios } = require('axios')
+const axios = require('axios')
 const express = require('express')
 const cors = require('cors')
 const puppeteer = require('puppeteer')
@@ -16,6 +16,14 @@ const categories = {
 
 app.get('/', (req, res) => {
   res.send('Query /apps?cat=[onlinecoop,localcoop,localpvp]')
+})
+
+app.get("/app", async (req, res, next = console.error) => {
+  const result = await axios.get(`http://store.steampowered.com/api/appdetails?appids=${req.query.id}`)
+  if (result.data && result.data[req.query.id] && result.data[req.query.id].success)
+    res.json(result.data[req.query.id]?.data)
+  else
+    res.json({error: "game not found"})
 })
 
 app.get('/apps', async (req, res, next = console.error) => {  
