@@ -2,7 +2,7 @@ import React from "react"
 import axios from "axios"
 import Game from "./Game.js"
 import { Link } from "react-router-dom"
-import "./GameList.css"
+import "./GameList.scss"
 
 function fetchCategory(c) {
   return axios.get(`http://localhost:3001/apps/?cat=${c}`).then(r => r.data)

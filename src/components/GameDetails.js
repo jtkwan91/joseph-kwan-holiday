@@ -1,6 +1,6 @@
 import axios from "axios"
 import React from "react"
-import "./GameDetails.css"
+import "./GameDetails.scss"
 
 function fetchApp(id) {
   return axios.get(`http://localhost:3001/app?id=${id}`).then(r => r.data)
@@ -29,12 +29,12 @@ class GameDetails extends React.Component {
     
     // details loaded successfully
     const { name, short_description, background, screenshots} = this.state.details
-    return <div className="game-details" style={{background: `url(${background})`}}>
-      <h3 className="game-details__name">{name}</h3>
-      <div className="game-details__screenshots">{screenshots.slice(0,6).map(s =>
-        <img className="game-details__screenshot" key={s.id} src={s.path_thumbnail} />
+    return <div className="game__details" style={{background: `url(${background})`}}>
+      <h3 className="game__details-name">{name}</h3>
+      <div className="game__details-screenshots">{screenshots.slice(0,6).map(s =>
+        <img className="game__details-screenshot" key={s.id} src={s.path_thumbnail} />
       )}</div>
-      <p className="game-details__description">
+      <p className="game__details-description">
         {short_description}
       </p>
     </div>

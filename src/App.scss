@@ -5,6 +5,11 @@ body {
   margin: 0;
 }
 
+a {
+  color: #111;
+  text-decoration: none;
+}
+
 .app {
   display: flex;
   justify-content: space-evenly;

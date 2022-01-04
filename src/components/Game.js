@@ -1,5 +1,5 @@
 import React from "react"
-import "./Game.css"
+import "./Game.scss"
 
 class Game extends React.Component {
   render () {

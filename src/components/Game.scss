@@ -1,0 +1,21 @@
+.game {
+  display: flex;
+  margin: 0.5rem 0;
+
+  &__container {
+    flex-grow: 1;
+  }
+  &__details {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+  }
+  &__name {
+    width: 100%;
+    margin: 0;
+    padding: 0 0.5rem;
+  }
+  &__rating {
+    color: #888;
+  }
+}
