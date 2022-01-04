@@ -29,10 +29,11 @@ class GameDetails extends React.Component {
     return <p>Error: {this.state.error.message}</p>
     
     // details loaded successfully
-    const { name, short_description, background, screenshots, steam_appid} = this.state.details 
+    const { name, short_description, background, screenshots, steam_appid, developers} = this.state.details 
     const storeLink = `https://store.steampowered.com/app/${steam_appid}`
     return <div className="game__details" style={{background: `url(${background})`}}>
-    <h3 className="game__details-name">{name}</h3>
+    <h1 className="game__details-name">{name}</h1>
+    <h3 className="game__details-dev">By: {developers}</h3>
     <div className="game__details-screenshots">{screenshots.slice(0,6).map(s =>
       <img className="game__details-screenshot" key={s.id} src={s.path_thumbnail} />
       )}</div>

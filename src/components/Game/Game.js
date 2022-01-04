@@ -3,7 +3,7 @@ import "./Game.scss"
 
 class Game extends React.Component {
   render () {
-    const { id, name, rating, price, image_uri } = this.props
+    const { name, rating, price, image_uri } = this.props
     return <div className="game">
         <img className="game-image" src={image_uri} />
         <div className="game-container">
