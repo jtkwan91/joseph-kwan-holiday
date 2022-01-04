@@ -1,0 +1,13 @@
+body {
+  box-sizing: border-box;
+  background-color: #f6fffe;
+  font-family: "Courier New", Courier, monospace;
+  margin: 0;
+}
+
+.app {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #f6fffe;
+  color: #111;
+}
