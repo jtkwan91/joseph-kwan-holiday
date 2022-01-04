@@ -12,11 +12,13 @@ To run this project, you must first start the Steam Search Server,
 $ npm run server
 ```
 
+You will see the following message:
+
 ```none
 Steam Search Server listening at http://localhost:3001
 ```
 
-The React app is configured
+Then start the React app normally,
 
 ```sh
 $ npm start
