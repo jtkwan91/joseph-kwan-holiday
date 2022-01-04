@@ -3,72 +3,80 @@ const express = require('express')
 const cors = require('cors')
 const puppeteer = require('puppeteer')
 
+// init express app
 const app = express()
 app.use(cors())
 const port = 3001
 
 // category names mapped to steam api category ids
-const categories = {
+const STEAM_CATEGORIES = {
   "onlinecoop": 38,
   "localcoop": 39,
   "localpvp": 37
 }
 
+// routes
 app.get('/', (req, res) => {
   res.send('Query /apps?cat=[onlinecoop,localcoop,localpvp]')
 })
 
-app.get("/app", async (req, res, next = console.error) => {
-  const result = await axios.get(`http://store.steampowered.com/api/appdetails?appids=${req.query.id}`)
-  if (result.data && result.data[req.query.id] && result.data[req.query.id].success)
-    res.json(result.data[req.query.id]?.data)
-  else
-    res.json({error: "game not found"})
+app.get("/app", async (req, res) => {
+  const appid = req.query.id
+  const url = `http://store.steampowered.com/api/appdetails?appids=${appid}`
+  const result = await axios.get(url)
+  const data = result?.data?.[appid]?.data
+  if (data == null) return res.json({error: "game not found"})    
+  res.json(data)
 })
 
-app.get('/apps', async (req, res, next = console.error) => {  
-  // get category
-  const category = categories[req.query.cat]
-  if (category == null) return res.json([])
-
+app.get('/apps', async (req, res) => {  
+  // lookup steamid for category
+  const cat = STEAM_CATEGORIES[req.query.cat]
+  // if steamid is not found, return empty result
+  if (cat == null) return res.json([])
   // create steam url
-  const url = `https://store.steampowered.com/search/?category1=998&category2=${category}`
+  const url = `https://store.steampowered.com/search/?category1=998&category2=${cat}`
+  // scrape steam url
   console.log("fetching", url)
-  
-  // launch puppeteer and scrape terrible steam api
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  await page.goto(url, {
-    waitUntil: 'networkidle2', // ?
-  })
-  
-  // scrape the id and name from the search result
-  const result = await page.$$eval('#search_resultsRows > a[data-ds-appid]', anchors => {
-    function parseRating(text) {
-      const [_, match = "0"] = text.match(/(\d+)%/) ?? []
-      return Number.parseInt(match)
-    }
-    function parsePrice(text) {
-      const [_, match = "0.00"] = text.match(/CDN\$\s*(\d+\.\d+)\s*$/) ?? []
-      return Number.parseFloat(match)
-    }
-    return Array.from(anchors, a => ({
-      id: a.dataset.dsAppid,
-      name: a.querySelector(".title")?.textContent,
-      href: a.href,
-      image_uri: a.querySelector("img")?.src,
-      rating: parseRating(a.querySelector(".search_review_summary").dataset.tooltipHtml),
-      price: parsePrice(a.querySelector(".search_price").textContent)
-    }))
-  })
-
-  // send result to client
-  res.json(result.slice(0,10))
-
-  // don't forget to close the puppeteer browser
-  await browser.close()
+  res.json(await scrape(url))
 })
 
+// start express app
 app.listen(port, () => {
   console.log(`Steam Search Server listening at http://localhost:${port}`)
 })
+
+// scrape utils
+async function scrape(url) {
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  await page.goto(url, { waitUntil: 'networkidle2' })
+  const result = await page.$$eval('#search_resultsRows > a[data-ds-appid]', anchors =>
+    Array.from(anchors, a => ({
+      id: a.dataset.dsAppid,
+      image_uri: a.querySelector("img")?.src,
+      name: a.querySelector(".title")?.textContent,
+      price: a.querySelector(".search_price").textContent,
+      rating: a.querySelector(".search_review_summary").dataset.tooltipHtml
+    }))
+  )
+  await browser.close()
+  return result.slice(0, 10).map(formatAnchor)
+}
+
+function formatAnchor(a) {
+  return Object.assign(a, {
+    price: formatPrice(a.price),
+    rating: formatRating(a.rating),
+  })
+}
+
+function formatPrice(text) {
+  const [_, match = "0.00"] = text.match(/CDN\$\s*(\d+\.\d+)\s*$/) ?? []
+  return Number.parseFloat(match)
+}
+
+function formatRating(text) {
+  const [_, match = "0"] = text.match(/(\d+)%/) ?? []
+  return Number.parseInt(match)
+}
