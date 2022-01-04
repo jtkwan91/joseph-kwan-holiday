@@ -1,21 +1,33 @@
 .game {
   display: flex;
   margin: 0.5rem 0;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  &:hover {
+    background-color: #171a21;
+  }
 
-  &__container {
+  &-container {
     flex-grow: 1;
   }
-  &__details {
+  &-image {
+    width: 5rem;
+    height: 3rem;
+  }
+  &-details {
     display: flex;
     justify-content: space-between;
     padding: 0 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  &__name {
+
+  &-name {
     width: 100%;
-    margin: 0;
     padding: 0 0.5rem;
   }
-  &__rating {
+
+  &-rating {
     color: #888;
   }
 }
