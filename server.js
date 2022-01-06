@@ -1,7 +1,7 @@
-const axios = require('axios')
-const express = require('express')
-const cors = require('cors')
-const puppeteer = require('puppeteer')
+const axios = require("axios")
+const express = require("express")
+const cors = require("cors")
+const puppeteer = require("puppeteer")
 const prettier = require("prettier")
 
 // init express app
@@ -17,8 +17,8 @@ const STEAM_CATEGORIES = {
 }
 
 // routes
-app.get('/', (req, res) => {
-  res.send('Query /apps?cat=[onlinecoop,localcoop,localpvp]')
+app.get("/", (req, res) => {
+  res.send("Query /apps?cat=[onlinecoop,localcoop,localpvp]")
 })
 
 app.get("/app", async (req, res) => {
@@ -30,7 +30,7 @@ app.get("/app", async (req, res) => {
   res.json(data)
 })
 
-app.get('/apps', async (req, res) => {  
+app.get("/apps", async (req, res) => {  
   // lookup steamid for category
   const cat = STEAM_CATEGORIES[req.query.cat]
   // if steamid is not found, return empty result
@@ -57,9 +57,9 @@ function handleParseError(html) {
 async function scrape(url) {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  await page.goto(url, { waitUntil: 'networkidle2' })
+  await page.goto(url, { waitUntil: "networkidle2" })
   await page.exposeFunction("handleParseError", handleParseError)
-  const result = await page.$$eval('#search_resultsRows > a[data-ds-appid]', anchors =>
+  const result = await page.$$eval("#search_resultsRows > a[data-ds-appid]", anchors =>
     Promise.all(Array.from(anchors, async a => {
       try {
         return {
