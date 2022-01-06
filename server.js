@@ -52,16 +52,25 @@ async function scrape(url) {
   const page = await browser.newPage()
   await page.goto(url, { waitUntil: 'networkidle2' })
   const result = await page.$$eval('#search_resultsRows > a[data-ds-appid]', anchors =>
-    Array.from(anchors, a => ({
-      id: a.dataset.dsAppid,
-      image_uri: a.querySelector("img")?.src,
-      name: a.querySelector(".title")?.textContent,
-      price: a.querySelector(".search_price").textContent,
-      rating: a.querySelector(".search_review_summary").dataset.tooltipHtml
-    }))
+    Array.from(anchors, a => {
+      try {
+        return {
+          id: a.dataset?.dsAppid,
+          image_uri: a.querySelector("img")?.src,
+          name: a.querySelector(".title")?.textContent,
+          price: a.querySelector(".search_price").textContent,
+          rating: a.querySelector(".search_review_summary").dataset.tooltipHtml
+        }
+      }
+      catch (e) {
+        // todo:
+        // bubble error "Could not parse Steam App:", a.outerHTML
+        return null
+      }
+    })
   )
   await browser.close()
-  return result.slice(0, 10).map(formatAnchor)
+  return result.filter(Boolean).slice(0, 10).map(formatAnchor)
 }
 
 function formatAnchor(a) {
