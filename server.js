@@ -63,9 +63,9 @@ async function scrape(url) {
     Promise.all(Array.from(anchors, async a => {
       try {
         return {
-          id: a.dataset?.dsAppid,
-          image_uri: a.querySelector("img")?.src,
-          name: a.querySelector(".title")?.textContent,
+          id: a.dataset.dsAppid,
+          image_uri: a.querySelector("img").src,
+          name: a.querySelector(".title").textContent,
           price: a.querySelector(".search_price").textContent,
           rating: a.querySelector(".search_review_summary").dataset.tooltipHtml
         }
