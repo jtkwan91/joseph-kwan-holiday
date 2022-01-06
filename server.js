@@ -2,6 +2,7 @@ const axios = require('axios')
 const express = require('express')
 const cors = require('cors')
 const puppeteer = require('puppeteer')
+const prettier = require("prettier")
 
 // init express app
 const app = express()
@@ -47,12 +48,19 @@ app.listen(port, () => {
 })
 
 // scrape utils
+function handleParseError(html) {
+  const s = prettier.format(html, {parser: "html"})
+  const message = `Could not parse Steam App:\n\`\`\`html\n${s}\`\`\`\n`
+  console.error(message)
+}
+
 async function scrape(url) {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
   await page.goto(url, { waitUntil: 'networkidle2' })
+  await page.exposeFunction("handleParseError", handleParseError)
   const result = await page.$$eval('#search_resultsRows > a[data-ds-appid]', anchors =>
-    Array.from(anchors, a => {
+    Promise.all(Array.from(anchors, async a => {
       try {
         return {
           id: a.dataset?.dsAppid,
@@ -63,11 +71,10 @@ async function scrape(url) {
         }
       }
       catch (e) {
-        // todo:
-        // bubble error "Could not parse Steam App:", a.outerHTML
+        await handleParseError(a.outerHTML)
         return null
       }
-    })
+    }))
   )
   await browser.close()
   return result.filter(Boolean).slice(0, 10).map(formatAnchor)
