@@ -29,8 +29,8 @@ class GameList extends React.Component {
       return <div className="game__list">
         <h3 className="game__list-title">{this.props.title}</h3>
         {this.state.games.map(game => {
-          return <Link to={`/game/${game.id}`}>
-            <Game key={game.id} {...game} />
+          return <Link to={`/game/${game.id}`} key={game.id}>
+            <Game {...game} />
           </Link>
         })}
       </div>
