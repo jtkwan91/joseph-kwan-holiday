@@ -8,6 +8,7 @@ Another issue we encountered was the Steam API does not support Cross-Origin req
 
 <img src="https://user-images.githubusercontent.com/90243125/172678433-7d3af3ab-dd54-4478-a9c4-82ee5efe05db.png" alt="steam top 10 main page">
 
+![chrome_LLCaOAtOxk](https://user-images.githubusercontent.com/90243125/172680066-b4e36837-dc64-48b9-9abf-a16a81164966.gif)
 
 To run this project, you must first start the Steam Search Server,
 
