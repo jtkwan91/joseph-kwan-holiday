@@ -6,7 +6,7 @@ The Steam API is very limited and does not provide ability to search by criteria
 
 Another issue we encountered was the Steam API does not support Cross-Origin requests, so querying directly within the React app was not an option. The Express server mitigates both issues.
 
-![image](https://user-images.githubusercontent.com/90243125/172677816-f8aa8497-b3f0-4705-918a-b5008967eaaa.png)
+<img src="https://user-images.githubusercontent.com/90243125/172678433-7d3af3ab-dd54-4478-a9c4-82ee5efe05db.png" alt="steam top 10 main page">
 
 
 To run this project, you must first start the Steam Search Server,
