@@ -11,9 +11,9 @@ const port = 3001
 
 // category names mapped to steam api category ids
 const STEAM_CATEGORIES = {
-  "onlinecoop": 38,
-  "localcoop": 39,
-  "localpvp": 37
+  onlinecoop: 38,
+  localcoop: 39,
+  localpvp: 37,
 }
 
 // routes
@@ -26,20 +26,25 @@ app.get("/app", async (req, res) => {
   const url = `http://store.steampowered.com/api/appdetails?appids=${appid}`
   const result = await axios.get(url)
   const data = result?.data?.[appid]?.data
-  if (data == null) return res.json({error: "game not found"})    
+  if (data == null) return res.json({ error: "game not found" })
   res.json(data)
 })
 
-app.get("/apps", async (req, res) => {  
-  // lookup steamid for category
-  const cat = STEAM_CATEGORIES[req.query.cat]
-  // if steamid is not found, return empty result
-  if (cat == null) return res.json([])
-  // create steam url
-  const url = `https://store.steampowered.com/search/?category1=998&category2=${cat}`
-  // scrape steam url
-  console.log("fetching", url)
-  res.json(await scrape(url))
+app.get("/apps", async (req, res) => {
+  try {
+    // lookup steamid for category
+    const cat = STEAM_CATEGORIES[req.query.cat]
+    // if steamid is not found, return empty result
+    if (cat == null) return res.json([])
+    // create steam url
+    const url = `https://store.steampowered.com/search/?category1=998&category2=${cat}`
+    // scrape steam url
+    console.log("fetching", url)
+    res.json(await scrape(url))
+  } catch (err) {
+    console.error(err)
+    res.json([])
+  }
 })
 
 // start express app
@@ -48,8 +53,9 @@ app.listen(port, () => {
 })
 
 // scrape utils
-function handleParseError(html) {
-  const s = prettier.format(html, {parser: "html"})
+function handleParseError(err, html) {
+  console.error(err)
+  const s = prettier.format(html, { parser: "html" })
   const message = `Could not parse Steam App:\n\`\`\`html\n${s}\`\`\`\n`
   console.error(message)
 }
@@ -59,22 +65,26 @@ async function scrape(url) {
   const page = await browser.newPage()
   await page.goto(url, { waitUntil: "networkidle2" })
   await page.exposeFunction("handleParseError", handleParseError)
-  const result = await page.$$eval("#search_resultsRows > a[data-ds-appid]", anchors =>
-    Promise.all(Array.from(anchors, async a => {
-      try {
-        return {
-          id: a.dataset.dsAppid,
-          image_uri: a.querySelector("img").src,
-          name: a.querySelector(".title").textContent,
-          price: a.querySelector(".search_price").textContent,
-          rating: a.querySelector(".search_review_summary").dataset.tooltipHtml
-        }
-      }
-      catch (e) {
-        await handleParseError(a.outerHTML)
-        return null
-      }
-    }))
+  const result = await page.$$eval(
+    "#search_resultsRows > a[data-ds-appid]",
+    (anchors) =>
+      Promise.all(
+        Array.from(anchors, async (a) => {
+          try {
+            return {
+              id: a.dataset.dsAppid,
+              image_uri: a.querySelector("img").src,
+              name: a.querySelector(".title").textContent,
+              price: a.querySelector(".search_price").textContent,
+              rating: a.querySelector(".search_review_summary").dataset
+                .tooltipHtml,
+            }
+          } catch (e) {
+            await handleParseError(e.message, a.outerHTML)
+            return null
+          }
+        })
+      )
   )
   await browser.close()
   return result.filter(Boolean).slice(0, 10).map(formatAnchor)
